@@ -1,0 +1,71 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.sample-data-viewer {
+    margin-top: $space-lg;
+
+    h4 {
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $color-text-secondary;
+        margin-bottom: $space-sm;
+    }
+}
+
+.table-tabs {
+    display: flex;
+    gap: $space-xs;
+    margin-bottom: $space-sm;
+    @include scrollable;
+}
+
+.table-tab {
+    padding: $space-sm $space-md;
+    font-size: 0.875rem;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &.active {
+        background: $color-primary;
+        color: white;
+        border-color: $color-primary;
+    }
+}
+
+.data-table {
+    width: 100%;
+    font-size: 0.8125rem;
+    border-collapse: collapse;
+
+    th,
+    td {
+        padding: $space-sm;
+        text-align: left;
+        border-bottom: 1px solid $color-border;
+    }
+
+    th {
+        font-weight: 600;
+        background: $color-bg;
+
+        .data-type {
+            display: block;
+            font-size: 0.625rem;
+            font-weight: 400;
+            color: $color-text-secondary;
+            text-transform: uppercase;
+        }
+    }
+
+    td {
+        font-family: 'SF Mono', monospace;
+    }
+
+    tbody tr:hover {
+        background: $color-bg;
+    }
+}

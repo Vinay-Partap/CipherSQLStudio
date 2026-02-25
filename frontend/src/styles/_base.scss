@@ -1,0 +1,53 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+
+    @include respond-to('tablet') {
+        font-size: 15px;
+    }
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: $color-bg;
+    color: $color-text;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+button {
+    font-family: inherit;
+}
+
+// Difficulty badges
+.difficulty {
+    display: inline-block;
+    padding: $space-xs $space-sm;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    &--easy {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    &--medium {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    &--hard {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+}

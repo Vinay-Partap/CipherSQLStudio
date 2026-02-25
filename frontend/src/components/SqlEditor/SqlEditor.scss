@@ -1,0 +1,41 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.sql-editor {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 300px;
+
+    &__toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $space-sm $space-md;
+        background: $editor-bg;
+        border-bottom: 1px solid #333;
+    }
+
+    &__label {
+        color: $color-text-secondary;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    &__run-btn {
+        @include touch-button;
+        background: $color-success;
+        color: white;
+        font-size: 0.875rem;
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+
+    &__container {
+        flex: 1;
+        min-height: 0;
+    }
+}

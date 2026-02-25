@@ -1,0 +1,55 @@
+@use 'variables' as *;
+
+@mixin respond-to($breakpoint) {
+    @if $breakpoint =='tablet' {
+        @media (min-width: $bp-tablet) {
+            @content;
+        }
+    }
+
+    @if $breakpoint =='desktop' {
+        @media (min-width: $bp-desktop) {
+            @content;
+        }
+    }
+
+    @if $breakpoint =='wide' {
+        @media (min-width: $bp-wide) {
+            @content;
+        }
+    }
+}
+
+@mixin touch-button {
+    min-height: $touch-min;
+    min-width: $touch-min;
+    padding: $space-sm $space-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    @include respond-to('tablet') {
+        padding: $space-sm $space-lg;
+    }
+}
+
+@mixin panel {
+    background: $color-surface;
+    border-radius: 8px;
+    border: 1px solid $color-border;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: $space-md;
+}
+
+@mixin scrollable {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}

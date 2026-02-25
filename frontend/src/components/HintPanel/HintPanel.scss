@@ -1,0 +1,58 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.hint-panel {
+    margin-top: $space-lg;
+    padding-top: $space-lg;
+    border-top: 1px solid $color-border;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        h4 {
+            font-size: 0.875rem;
+            color: $color-text-secondary;
+        }
+    }
+}
+
+.hint-btn {
+    @include touch-button;
+    background: $color-warning;
+    color: white;
+    font-size: 0.875rem;
+
+    &:disabled {
+        opacity: 0.6;
+    }
+}
+
+.hint-box {
+    margin-top: $space-md;
+    padding: $space-md;
+    background: #fffbeb;
+    border-left: 4px solid $color-warning;
+    border-radius: 4px;
+
+    p {
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        color: $color-text;
+        margin-bottom: $space-sm;
+    }
+}
+
+.hint-hide {
+    font-size: 0.75rem;
+    color: $color-text-secondary;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+
+    &:hover {
+        color: $color-text;
+    }
+}

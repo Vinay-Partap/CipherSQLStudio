@@ -1,0 +1,81 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.results-panel {
+    @include panel;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &--empty {
+        align-items: center;
+        justify-content: center;
+        color: $color-text-secondary;
+    }
+
+    &--error {
+        border-left: 4px solid $color-error;
+    }
+}
+
+.results-header {
+    padding: $space-sm $space-md;
+    background: $color-bg;
+    border-bottom: 1px solid $color-border;
+    font-size: 0.875rem;
+    color: $color-text-secondary;
+}
+
+.results-table-wrapper {
+    flex: 1;
+    @include scrollable;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+
+    th,
+    td {
+        padding: $space-sm $space-md;
+        text-align: left;
+        border-bottom: 1px solid $color-border;
+        white-space: nowrap;
+    }
+
+    th {
+        position: sticky;
+        top: 0;
+        background: $color-surface;
+        font-weight: 600;
+        color: $color-text-secondary;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+    }
+
+    tr:hover {
+        background: $color-bg;
+    }
+
+    .null {
+        color: $color-text-secondary;
+        font-style: italic;
+    }
+}
+
+.error-header {
+    padding: $space-md;
+    background: $color-error;
+    color: white;
+    font-weight: 600;
+}
+
+.error-message {
+    padding: $space-md;
+    color: $color-error;
+    font-family: monospace;
+    font-size: 0.875rem;
+}

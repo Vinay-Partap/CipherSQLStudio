@@ -1,0 +1,34 @@
+// Breakpoints - Mobile First
+$bp-mobile: 320px;
+$bp-tablet: 641px;
+$bp-desktop: 1024px;
+$bp-wide: 1281px;
+
+// Colors
+$color-primary: #2563eb;
+$color-primary-dark: #1d4ed8;
+$color-success: #10b981;
+$color-error: #ef4444;
+$color-warning: #f59e0b;
+$color-info: #3b82f6;
+
+// Neutrals
+$color-bg: #f1f5f9;
+$color-surface: #ffffff;
+$color-border: #e2e8f0;
+$color-text: #1e293b;
+$color-text-secondary: #64748b;
+
+// Editor
+$editor-bg: #1e1e1e;
+$editor-text: #d4d4d4;
+
+// Spacing
+$space-xs: 0.25rem;
+$space-sm: 0.5rem;
+$space-md: 1rem;
+$space-lg: 1.5rem;
+$space-xl: 2rem;
+
+// Touch
+$touch-min: 44px;
