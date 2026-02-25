@@ -1,228 +1,167 @@
 # CipherSQLStudio
 
-CipherSQLStudio is a full-stack SQL practice platform where learners solve assignments in a browser-based editor, run queries safely in an isolated PostgreSQL workspace, and request AI-generated hints (without full solutions).
+A browser-based SQL learning platform where students can practice SQL queries against pre-configured assignments with real-time execution and intelligent AI hints.
 
-## What this project does
+##  Project Overview
 
-- Serves SQL assignments from MongoDB.
-- Lets users write and run queries in Monaco Editor (Ctrl/Cmd + Enter supported).
-- Executes each query inside an isolated PostgreSQL schema per session.
-- Resets execution state using transactions (`ROLLBACK`) to avoid persistent destructive changes.
-- Provides concise tutoring-style hints using Google Gemini.
+CipherSQLStudio allows users to:
+- View SQL assignment questions with pre-loaded sample data
+- Write and execute SQL queries in a browser-based editor (Monaco Editor)
+- Get intelligent hints (not solutions) from Google's Gemini AI
+- See query results in real-time
+- Practice on mobile or desktop (responsive design)
 
-## Tech Stack
 
-- **Frontend:** React 19, Vite, SCSS, Monaco Editor
-- **Backend:** Node.js, Express
-- **Databases:** PostgreSQL (execution sandbox), MongoDB (assignment content)
-- **AI:** Google Gemini (`gemini-1.5-flash`)
+##  Screenshots
 
-## Repository Structure
+<img src="Assests/image.png" width="700"/>
+
+##  Technology Stack
+
+### Frontend
+- **React.js** (Vite) - UI framework
+- **Monaco Editor** - SQL code editor (same as VS Code)
+- **SCSS** - Styling with mobile-first responsive approach
+- **React Router** - Navigation
+
+### Backend
+- **Node.js** + **Express.js** - API server
+- **PostgreSQL** - Sandbox database for query execution (isolated schemas per session)
+- **MongoDB** - Stores assignments and user progress
+- **Google Gemini API** - AI hint generation
+
+### Key Features
+- **Database Isolation**: Each user gets a PostgreSQL schema, data auto-rolls back after execution
+- **Security**: Query validation blocks dangerous SQL commands
+- **AI Integration**: Prompt-engineered to give hints, never solutions
+
+##  Project Structure
 
 ```text
 CipherSQLStudio/
-├─ backend/   # Express API, Mongo + Postgres integration, seeding, hint generation
-└─ frontend/  # React app, assignment UI, SQL editor, results + hints panels
+├── backend/
+│ ├── config/ # Database connections
+│ ├── models/ # MongoDB schemas
+│ ├── routes/ # API endpoints
+│ ├── services/ # Business logic (LLM, Query execution)
+│ ├── utils/ # Seed data
+│ ├── .env.example # Environment template
+│ └── server.js # Entry point
+├── frontend/
+│ ├── src/
+│ │ ├── components/ # React components
+│ │ ├── pages/ # Route pages
+│ │ ├── services/ # API calls
+│ │ └── styles/ # SCSS files
+│ ├── .env.example # Environment template
+│ └── index.html
+├── data-flow-diagram.png # Hand-drawn diagram (required)
+└── README.md
 ```
 
-## Prerequisites
+## ⚙️ Installation & Setup
 
+### Prerequisites
 - Node.js 18+
-- npm 9+
 - PostgreSQL 14+
-- MongoDB 6+
-- Gemini API key from Google AI Studio
+- MongoDB (local or Atlas)
+- Google Gemini API key (free from [ai.google.dev](https://ai.google.dev))
 
-## Quick Start
-
-### 1 Clone and install dependencies
-
+### 1. Clone Repository
 ```bash
-git clone <your-repo-url>
+git clone 
 cd CipherSQLStudio
-
-cd backend
-npm install
-
-cd ../frontend
-npm install
 ```
 
-### 2 Configure environment variables
-
-#### Backend (`backend/.env`)
-
-Copy `backend/.env.example` to `backend/.env` and set values:
-
-```dotenv
+### 2. Backend Setup
+```bash
+cd backend
+cp .env.example .env
+# Edit .env with your credentials
+npm install
+npm run seed      # Load sample assignments into MongoDB
+npm run dev       # Starts on http://localhost:5000
+```
+#### Backend .env variables:
+```text
 PORT=5000
 PG_HOST=localhost
 PG_PORT=5432
 PG_DATABASE=ciphersqlstudio
-PG_USER=your_username
-PG_PASSWORD=your_password
+PG_USER=postgres
+PG_PASSWORD=your_postgres_password
 MONGODB_URI=mongodb://localhost:27017/ciphersqlstudio
 MONGODB_DB_NAME=ciphersqlstudio
-GEMINI_API_KEY=your_gemini_api_key
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
-
-#### Frontend (`frontend/.env`)
-
-Copy `frontend/.env.example` to `frontend/.env`:
-
-```dotenv
-VITE_API_URL=http://localhost:5000/api
-```
-
-### 3 Create PostgreSQL database
-
-Run once in `psql`:
-
-```sql
-CREATE DATABASE ciphersqlstudio;
-```
-
-### 4 Seed sample assignments
-
-```bash
-cd backend
-npm run seed
-```
-
-This seeds 4 starter assignments (Easy → Hard) into MongoDB.
-
-### 5 Start development servers
-
-Terminal 1:
-
-```bash
-cd backend
-npm run dev
-```
-
-Terminal 2:
-
+### 3. Frontend Setup
 ```bash
 cd frontend
-npm run dev
+cp .env.example .env
+npm install
+npm run dev       # Starts on http://localhost:5174
 ```
-
-Open: `http://localhost:5173`
-
-## Available Scripts
-
-### Backend (`backend/package.json`)
-
-- `npm run dev` — start API with nodemon
-- `npm start` — start API with Node
-- `npm run seed` — seed assignment documents into MongoDB
-
-### Frontend (`frontend/package.json`)
-
-- `npm run dev` — start Vite dev server
-- `npm run build` — production build
-- `npm run preview` — preview production build
-- `npm run lint` — run ESLint
-
-## API Overview
-
-Base URL: `http://localhost:5000/api`
-
-### Health
-
-- `GET /health` → `{ status: "OK" }`
-
-### Assignments
-
-- `GET /assignments` — list all assignments
-- `GET /assignments/:id` — fetch one assignment by Mongo ObjectId
-
-### Query Execution
-
-- `POST /execute`
-- Body:
-
-```json
-{
-  "assignmentId": "<mongo-id>",
-  "query": "SELECT * FROM employees;",
-  "sessionId": "<uuid>"
-}
+#### Frontend .env variables:
+```text
+VITE_API_URL=http://localhost:5000
 ```
+### 4. Verify Installation
+- Backend health check: http://localhost:5000/api/health
+- Frontend: http://localhost:5174
+- You should see 4 pre-loaded assignments
 
-- Success response:
+## Data Flow Architecture
+<img src="Assests/data-flow-diagram.jpeg" width="500"/>
 
-```json
-{
-  "success": true,
-  "columns": ["id", "name"],
-  "rows": [{ "id": 1, "name": "Alice" }],
-  "rowCount": 1
-}
-```
+See data-flow-diagram.png (hand-drawn) for visual representation.
 
-- Error response:
 
-```json
-{
-  "success": false,
-  "error": "<message>"
-}
-```
+### Query Execution Flow:
+- User writes SQL query → clicks "Execute"
+- Frontend sends POST to /api/execute with query + sessionId
+- Backend receives request, validates query against blocked keywords
+- PostgreSQL Service creates isolated schema (workspace_sessionId)
+- Setup inserts sample data tables for this assignment
+- Execute runs user's query within transaction
+- Rollback transaction (ensures no persistent changes)
+- Return results or error to frontend
+- Frontend displays results in table format or error message
 
-### AI Hints
+### Hint Generation Flow:
+- User clicks "Get Hint"
+- Frontend sends POST to /api/hints with assignmentId, query, any error
+- Backend fetches assignment details from MongoDB
+- LLM Service crafts prompt with rules: "NEVER give SQL, only hints"
+- Gemini API returns guidance
+- Backend returns hint to frontend
+- Frontend displays hint in hint panel
+---
+## Security Measures
+- Schema Isolation: Each user session gets separate PostgreSQL schema
+- Transaction Rollback: All queries run in transactions that rollback
+- Query Validation: Blocks DROP DATABASE, CREATE USER, system table access
+- Input Sanitization: Prevents SQL injection patterns
 
-- `POST /hints`
-- Body:
+## Mobile-First Design
+- Breakpoints: 320px (mobile), 641px (tablet), 1024px+ (desktop)
+- Touch-friendly targets: minimum 44px
+- Responsive grid layouts using CSS Grid and Flexbox
+- Monaco Editor works on mobile with optimized settings
 
-```json
-{
-  "assignmentId": "<mongo-id>",
-  "query": "SELECT ...",
-  "errorMessage": "optional error text"
-}
-```
+## Sample Assignments Included
+- Find High Salary Employees (Easy) - Basic WHERE clause
+- Department-wise Employee Count (Medium) - GROUP BY
+- Total Order Value per Customer (Medium) - JOIN operations
+- Highest Paid Employee (Hard) - Subqueries/MAX
 
-- Response:
+## Contributing
+This project was built as an educational assignment. The focus is on demonstrating:
 
-```json
-{
-  "hint": "Guiding hint text"
-}
-```
-
-## Security & Sandbox Behavior
-
-- Queries run in a per-session schema (`workspace_<sessionId>`).
-- Assignment tables are recreated before each execution.
-- Execution is wrapped in a transaction and always rolled back.
-- A keyword-based validator blocks dangerous/system-level operations (for example, critical `DROP`, `ALTER USER`, and `PG_`-targeted commands).
-
-> Note: The validator is intentionally simple. For production hardening, use stronger SQL parsing + allow-listing.
-
-## Learning Flow
-
-1. User opens home page and selects an assignment.
-2. Frontend loads assignment details and sample tables.
-3. User writes SQL in Monaco Editor.
-4. Backend creates isolated Postgres schema, loads sample data, validates SQL, runs query, and returns rows/errors.
-5. User can request a hint based on current query/error context.
-
-## Troubleshooting
-
-- **`Failed to load assignments` in UI**
-  - Ensure backend is running on port `5000`.
-  - Check `frontend/.env` has correct `VITE_API_URL`.
-
-- **Backend exits on startup**
-  - Verify `MONGODB_URI` and Postgres credentials in `backend/.env`.
-
-- **`Assignment not found`**
-  - Run `npm run seed` in `backend` again.
-
-- **Hint endpoint returns fallback hint**
-  - Check `GEMINI_API_KEY` validity and quota.
+- Full-stack JavaScript development
+- Database design and security
+- Third-party API integration (LLM)
+- Responsive UI/UX design
+- Clean code architecture
 
 ## License
-
-Add your preferred license (MIT/Apache-2.0/etc.) in this repository.
+MIT License - Built for educational purposes.
