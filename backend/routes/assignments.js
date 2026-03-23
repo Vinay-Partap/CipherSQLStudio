@@ -26,6 +26,29 @@ router.get('/', async (req, res) => {
             ]
           }
         ]
+      },
+      {
+        id: 2,
+        title: "Engineering Employees",
+        description: "List all employees from Engineering department",
+        difficulty: "Easy",
+        sampleTables: [
+          {
+            tableName: "employees",
+            columns: [
+              { columnName: "id", dataType: "INTEGER" },
+              { columnName: "name", dataType: "TEXT" },
+              { columnName: "salary", dataType: "INTEGER" },
+              { columnName: "department", dataType: "TEXT" }
+            ],
+            rows: [
+              { id: 1, name: "Alice", salary: 45000, department: "HR" },
+              { id: 2, name: "Bob", salary: 60000, department: "Engineering" },
+              { id: 3, name: "Charlie", salary: 75000, department: "Engineering" },
+              { id: 4, name: "Diana", salary: 48000, department: "Sales" }
+            ]
+          }
+        ]
       }
     ];
 
