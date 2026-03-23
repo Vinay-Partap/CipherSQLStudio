@@ -67,3 +67,12 @@ module.exports = {
   createWorkspaceSchema,
   setupAssignmentData
 };
+// ✅ ADD THIS
+pool.connect()
+  .then(client => {
+    console.log("PostgreSQL connected ✅");
+    client.release();
+  })
+  .catch(err => {
+    console.error("PostgreSQL connection error ❌:", err);
+  });
