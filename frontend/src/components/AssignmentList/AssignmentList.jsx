@@ -36,17 +36,17 @@ function AssignmentList() {
       <div className="assignment-list__grid">
         {assignments.map((assignment) => (
           <Link 
-            key={assignment._id} 
-            to={`/assignment/${assignment._id}`}
+            key={assignment.id} 
+            to={`/assignment/${assignment.id}`}
             className="assignment-card"
           >
             <div className="assignment-card__header">
               <h3>{assignment.title}</h3>
-              <span className={`difficulty difficulty--${assignment.description.toLowerCase()}`}>
-                {assignment.description}
+              <span className={`difficulty difficulty--${assignment.difficulty.toLowerCase()}`}>
+                {assignment.difficulty}
               </span>
             </div>
-            <p className="assignment-card__question">{assignment.question}</p>
+            <p className="assignment-card__question">{assignment.description}</p>
             <div className="assignment-card__meta">
               {assignment.sampleTables?.length || 0} table{assignment.sampleTables?.length !== 1 ? 's' : ''}
             </div>
