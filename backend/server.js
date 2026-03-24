@@ -20,6 +20,12 @@ app.get('/api/health', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+app.use(cors({
+  origin: [
+    "http://localhost:5174",
+    "https://cipher-sql-studio-mu.vercel.app"
+  ]
+}));
 
 // Start server after DB connection
 async function startServer() {
