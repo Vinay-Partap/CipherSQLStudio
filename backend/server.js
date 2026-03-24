@@ -5,8 +5,13 @@ const { connectMongoDB } = require('./config/database');
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Middleware - CORS pehle hona chahiye
+app.use(cors({
+  origin: [
+    "http://localhost:5174",
+    "https://cipher-sql-studio-mu.vercel.app"
+  ]
+}));
 app.use(express.json());
 
 // Routes
@@ -19,15 +24,19 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK' });
 });
 
-const PORT = process.env.PORT || 5000;
-app.use(cors({
-  origin: [
-    "http://localhost:5174",
-    "https://cipher-sql-studio-mu.vercel.app"
-  ]
-}));
+// Temporary seed route
+app.get('/api/seed', async (req, res) => {
+  try {
+    const { seedDatabase } = require('./utils/seedData');
+    await seedDatabase();
+    res.json({ status: 'Seeded successfully!' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-// Start server after DB connection
+const PORT = process.env.PORT || 5000;
+
 async function startServer() {
   await connectMongoDB();
   app.listen(PORT, () => {
