@@ -3,7 +3,8 @@ const { connectMongoDB, getDB } = require('../config/database');
 const sampleAssignments = [
   {
     title: "Find High Salary Employees",
-    description: "Easy",
+    difficulty: "Easy",
+    description: "List all employees earning more than 50,000",
     question: "List all employees earning more than 50,000",
     sampleTables: [
       {
@@ -25,7 +26,8 @@ const sampleAssignments = [
   },
   {
     title: "Department-wise Employee Count",
-    description: "Medium",
+    difficulty: "Medium",
+    description: "Find the number of employees in each department",
     question: "Find the number of employees in each department",
     sampleTables: [
       {
@@ -47,7 +49,8 @@ const sampleAssignments = [
   },
   {
     title: "Total Order Value per Customer",
-    description: "Medium",
+    difficulty: "Medium",
+    description: "Find total order value for each customer using JOIN",
     question: "Find total order value for each customer using JOIN",
     sampleTables: [
       {
@@ -78,7 +81,8 @@ const sampleAssignments = [
   },
   {
     title: "Highest Paid Employee",
-    description: "Hard",
+    difficulty: "Hard",
+    description: "Find the employee(s) with the highest salary (may be multiple)",
     question: "Find the employee(s) with the highest salary (may be multiple)",
     sampleTables: [
       {
@@ -103,15 +107,10 @@ async function seedDatabase() {
     await connectMongoDB();
     const db = getDB();
     const collection = db.collection('assignments');
-    
-    // Clear existing
     await collection.deleteMany({});
     console.log('Cleared existing assignments');
-    
-    // Insert new
     const result = await collection.insertMany(sampleAssignments);
     console.log(`Inserted ${result.insertedCount} assignments`);
-    
     console.log('Seed completed!');
   } catch (error) {
     console.error('Seed failed:', error);
@@ -122,4 +121,5 @@ async function seedDatabase() {
 if (require.main === module) {
   seedDatabase();
 }
+
 module.exports = { seedDatabase };
