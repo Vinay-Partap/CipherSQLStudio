@@ -112,10 +112,10 @@ async function seedDatabase() {
     const result = await collection.insertMany(sampleAssignments);
     console.log(`Inserted ${result.insertedCount} assignments`);
     
-    process.exit(0);
+    console.log('Seed completed!');
   } catch (error) {
     console.error('Seed failed:', error);
-    process.exit(1);
+    throw error;
   }
 }
 

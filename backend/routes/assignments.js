@@ -6,7 +6,11 @@ router.get('/', async (req, res) => {
   try {
     const db = getDB();
     const assignments = await db.collection('assignments').find({}).toArray();
-    res.json(assignments);
+    const formatted = assignments.map((a, index) => ({
+      id: index + 1,
+      ...a,
+    }));
+    res.json(formatted);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
