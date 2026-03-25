@@ -14,6 +14,7 @@ function AssignmentPage() {
   const [error, setError] = useState('');
   const [executing, setExecuting] = useState(false);
   const [hintLoading, setHintLoading] = useState(false);
+  const [sessionId] = useState(() => Math.random().toString(36).substr(2, 9));
 
   useEffect(() => {
     loadAssignment();
@@ -37,7 +38,7 @@ function AssignmentPage() {
     setError('');
     setResult(null);
     try {
-      const data = await executeQuery(query, id);
+      const data = await executeQuery(id, query, sessionId);
       setResult(data);
     } catch (err) {
       setError(err.message || 'Query execution failed');
@@ -59,93 +60,102 @@ function AssignmentPage() {
     }
   }
 
-  if (loading) return <div className="loading">Loading assignment...</div>;
-  if (!assignment) return <div className="not-found">Assignment not found</div>;
+  if (loading) return <div>Loading assignment...</div>;
+  if (!assignment) return <div>Assignment not found</div>;
 
   return (
     <div className="assignment-page">
-      <div className="assignment-header">
-        <h2>{assignment.title}</h2>
-        <p>{assignment.description}</p>
-      </div>
-
-      <div className="assignment-content">
-        <div className="left-panel">
-          <div className="sample-tables">
-            <h3>Sample Table:</h3>
-            {assignment.sampleTables.map((table, index) => (
-              <div key={index} className="table-wrapper">
-                <h4>{table.tableName}</h4>
-                <table>
-                  <thead>
-                    <tr>
-                      {table.columns.map(col => (
-                        <th key={col.columnName}>{col.columnName}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {table.rows.map((row, i) => (
-                      <tr key={i}>
-                        {Object.values(row).map((val, j) => (
-                          <td key={j}>{val}</td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ))}
+      <div className="assignment-page__sidebar">
+        <div className="question-panel">
+          <div className="question-panel__header">
+            <h1>{assignment.title}</h1>
           </div>
-
-          {hint && (
-            <div className="hint-box">
-              <h4>Hint:</h4>
-              <p>{hint}</p>
-            </div>
-          )}
+          <p className="question-panel__text">
+            {assignment.question || assignment.description}
+          </p>
         </div>
 
-        <div className="right-panel">
-          <div className="editor-wrapper">
-            <Editor
-              height="200px"
-              language="sql"
-              value={query}
-              onChange={(val) => setQuery(val || '')}
-              theme="vs-dark"
-              options={{
-                minimap: { enabled: false },
-                fontSize: 14,
-                lineNumbers: 'on',
-                scrollBeyondLastLine: false,
-              }}
-            />
-          </div>
+        <div style={{ marginTop: '1rem' }}>
+          <h3>Sample Table:</h3>
+          {assignment.sampleTables?.map((table, index) => (
+            <div key={index} style={{ marginBottom: '1rem' }}>
+              <h4>{table.tableName}</h4>
+              <table border="1" cellPadding="5" style={{ borderCollapse: 'collapse', width: '100%' }}>
+                <thead>
+                  <tr>
+                    {table.columns.map(col => (
+                      <th key={col.columnName}>{col.columnName}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {table.rows.map((row, i) => (
+                    <tr key={i}>
+                      {Object.values(row).map((val, j) => (
+                        <td key={j}>{val}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
 
-          <div className="action-buttons">
-            <button
-              className="execute-btn"
-              onClick={handleExecute}
-              disabled={executing}
-            >
-              {executing ? 'Executing...' : 'Execute Query'}
-            </button>
-            <button
-              className="hint-btn"
-              onClick={handleHint}
-              disabled={hintLoading}
-            >
-              {hintLoading ? 'Getting hint...' : 'Get Hint'}
-            </button>
+        {hint && (
+          <div style={{ marginTop: '1rem', padding: '1rem', background: '#f0f9ff', borderRadius: '8px', border: '1px solid #0ea5e9' }}>
+            <h4>💡 Hint:</h4>
+            <p>{hint}</p>
           </div>
+        )}
+      </div>
 
-          {error && <div className="error-box">{error}</div>}
+      <div className="assignment-page__main">
+        <Editor
+          height="100%"
+          language="sql"
+          value={query}
+          onChange={(val) => setQuery(val || '')}
+          theme="vs-dark"
+          options={{
+            minimap: { enabled: false },
+            fontSize: 14,
+            lineNumbers: 'on',
+            scrollBeyondLastLine: false,
+            padding: { top: 16 }
+          }}
+        />
+      </div>
+
+      <div className="assignment-page__results">
+        <div style={{ padding: '1rem', borderBottom: '1px solid #e2e8f0', display: 'flex', gap: '0.5rem' }}>
+          <button
+            onClick={handleExecute}
+            disabled={executing}
+            style={{ padding: '0.5rem 1rem', background: '#6366f1', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}
+          >
+            {executing ? 'Running...' : '▶ Run Query'}
+          </button>
+          <button
+            onClick={handleHint}
+            disabled={hintLoading}
+            style={{ padding: '0.5rem 1rem', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}
+          >
+            {hintLoading ? 'Loading...' : '💡 Get Hint'}
+          </button>
+        </div>
+
+        <div style={{ padding: '1rem', overflowY: 'auto' }}>
+          {error && (
+            <div style={{ padding: '1rem', background: '#fef2f2', border: '1px solid #ef4444', borderRadius: '6px', color: '#dc2626' }}>
+              ❌ {error}
+            </div>
+          )}
 
           {result && (
-            <div className="result-box">
-              <h4>Result:</h4>
-              <table>
+            <div>
+              <h4 style={{ marginBottom: '0.5rem' }}>Result:</h4>
+              <table border="1" cellPadding="5" style={{ borderCollapse: 'collapse', width: '100%' }}>
                 <thead>
                   <tr>
                     {result.columns?.map((col, i) => (
@@ -164,6 +174,10 @@ function AssignmentPage() {
                 </tbody>
               </table>
             </div>
+          )}
+
+          {!error && !result && (
+            <p style={{ color: '#94a3b8' }}>Query results will appear here...</p>
           )}
         </div>
       </div>
