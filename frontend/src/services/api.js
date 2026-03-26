@@ -36,10 +36,10 @@ export function executeQuery(assignmentId, query, sessionId) {
   });
 }
 
-export function getHint(assignmentId, query, errorMessage) {
+export function getHint(assignmentId, query, errorMessage, hintLevel = 1) {
   return fetchApi('/api/hints', {
     method: 'POST',
-    body: JSON.stringify({ assignmentId, query, errorMessage })
+    body: JSON.stringify({ assignmentId, query, errorMessage, hintLevel })
   });
 }
 

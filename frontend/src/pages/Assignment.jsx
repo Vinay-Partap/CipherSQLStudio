@@ -10,7 +10,8 @@ function AssignmentPage() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
   const [result, setResult] = useState(null);
-  const [hint, setHint] = useState('');
+  const [hints, setHints] = useState([]);
+  const [hintLevel, setHintLevel] = useState(1);
   const [error, setError] = useState('');
   const [executing, setExecuting] = useState(false);
   const [hintLoading, setHintLoading] = useState(false);
@@ -40,12 +41,11 @@ function AssignmentPage() {
     try {
       const data = await executeQuery(id, query, sessionId);
       setResult(data);
-      // Mark as solved in localStorage
-const solvedList = JSON.parse(localStorage.getItem('solvedAssignments') || '[]');
-if (!solvedList.includes(Number(id))) {
-  solvedList.push(Number(id));
-  localStorage.setItem('solvedAssignments', JSON.stringify(solvedList));
-}
+      const solvedList = JSON.parse(localStorage.getItem('solvedAssignments') || '[]');
+      if (!solvedList.includes(Number(id))) {
+        solvedList.push(Number(id));
+        localStorage.setItem('solvedAssignments', JSON.stringify(solvedList));
+      }
     } catch (err) {
       setError(err.message || 'Query execution failed');
     } finally {
@@ -54,13 +54,14 @@ if (!solvedList.includes(Number(id))) {
   }
 
   async function handleHint() {
+    if (hintLevel > 3) return;
     setHintLoading(true);
-    setHint('');
     try {
-      const data = await getHint(id, query, error);
-      setHint(data.hint);
+      const data = await getHint(id, query, error, hintLevel);
+      setHints(prev => [...prev, { level: hintLevel, text: data.hint }]);
+      setHintLevel(prev => prev + 1);
     } catch (err) {
-      setHint('Could not get hint. Try again.');
+      setHints(prev => [...prev, { level: hintLevel, text: 'Could not get hint. Try again.' }]);
     } finally {
       setHintLoading(false);
     }
@@ -82,15 +83,15 @@ if (!solvedList.includes(Number(id))) {
         </div>
 
         <div style={{ marginTop: '1rem' }}>
-          <h3>Sample Table:</h3>
+          <h3 style={{ color: 'var(--color-text)', marginBottom: '0.5rem' }}>Sample Table:</h3>
           {assignment.sampleTables?.map((table, index) => (
             <div key={index} style={{ marginBottom: '1rem' }}>
-              <h4>{table.tableName}</h4>
-              <table border="1" cellPadding="5" style={{ borderCollapse: 'collapse', width: '100%' }}>
+              <h4 style={{ color: 'var(--color-text)', marginBottom: '0.3rem' }}>{table.tableName}</h4>
+              <table border="1" cellPadding="5" style={{ borderCollapse: 'collapse', width: '100%', fontSize: '0.8rem', color: 'var(--color-text)' }}>
                 <thead>
-                  <tr>
+                  <tr style={{ background: 'var(--color-surface)' }}>
                     {table.columns.map(col => (
-                      <th key={col.columnName}>{col.columnName}</th>
+                      <th key={col.columnName} style={{ padding: '0.4rem', textAlign: 'left' }}>{col.columnName}</th>
                     ))}
                   </tr>
                 </thead>
@@ -98,7 +99,7 @@ if (!solvedList.includes(Number(id))) {
                   {table.rows.map((row, i) => (
                     <tr key={i}>
                       {Object.values(row).map((val, j) => (
-                        <td key={j}>{val}</td>
+                        <td key={j} style={{ padding: '0.4rem' }}>{val}</td>
                       ))}
                     </tr>
                   ))}
@@ -108,10 +109,29 @@ if (!solvedList.includes(Number(id))) {
           ))}
         </div>
 
-        {hint && (
-          <div style={{ marginTop: '1rem', padding: '1rem', background: '#f0f9ff', borderRadius: '8px', border: '1px solid #0ea5e9' }}>
-            <h4>💡 Hint:</h4>
-            <p>{hint}</p>
+        {hints.length > 0 && (
+          <div style={{ marginTop: '1rem' }}>
+            <h4 style={{ marginBottom: '0.5rem', color: 'var(--color-text)' }}>Hints:</h4>
+            {hints.map((h, i) => (
+              <div key={i} style={{
+                padding: '0.75rem',
+                marginBottom: '0.5rem',
+                borderRadius: '8px',
+                border: '1px solid',
+                borderColor: h.level === 1 ? '#86efac' : h.level === 2 ? '#fcd34d' : '#fca5a5',
+                background: h.level === 1 ? '#f0fdf4' : h.level === 2 ? '#fffbeb' : '#fef2f2',
+              }}>
+                <div style={{
+                  fontSize: '0.7rem',
+                  fontWeight: '700',
+                  marginBottom: '0.3rem',
+                  color: h.level === 1 ? '#166534' : h.level === 2 ? '#92400e' : '#991b1b'
+                }}>
+                  {h.level === 1 ? '💡 HINT 1 — Gentle nudge' : h.level === 2 ? '🔍 HINT 2 — Concept' : '🎯 HINT 3 — Detailed'}
+                </div>
+                <p style={{ fontSize: '0.875rem', color: '#374151' }}>{h.text}</p>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -134,38 +154,90 @@ if (!solvedList.includes(Number(id))) {
       </div>
 
       <div className="assignment-page__results">
-        <div style={{ padding: '1rem', borderBottom: '1px solid #e2e8f0', display: 'flex', gap: '0.5rem' }}>
+        <div style={{
+          padding: '1rem',
+          borderBottom: '1px solid var(--color-border)',
+          display: 'flex',
+          gap: '0.5rem',
+          background: 'var(--color-surface)'
+        }}>
           <button
             onClick={handleExecute}
             disabled={executing}
-            style={{ padding: '0.5rem 1rem', background: '#6366f1', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}
+            style={{
+              padding: '0.5rem 1rem',
+              background: '#6366f1',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: executing ? 'not-allowed' : 'pointer',
+              fontWeight: '600',
+              opacity: executing ? 0.7 : 1
+            }}
           >
             {executing ? 'Running...' : '▶ Run Query'}
           </button>
           <button
             onClick={handleHint}
-            disabled={hintLoading}
-            style={{ padding: '0.5rem 1rem', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}
+            disabled={hintLoading || hintLevel > 3}
+            style={{
+              padding: '0.5rem 1rem',
+              background: hintLevel > 3 ? '#e2e8f0' : '#f59e0b',
+              color: hintLevel > 3 ? '#94a3b8' : 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: hintLevel > 3 ? 'not-allowed' : 'pointer',
+              fontWeight: '600'
+            }}
           >
-            {hintLoading ? 'Loading...' : '💡 Get Hint'}
+            {hintLoading ? 'Loading...' : hintLevel > 3 ? 'No more hints' : `💡 Hint ${hintLevel}/3`}
           </button>
         </div>
 
-        <div style={{ padding: '1rem', overflowY: 'auto' }}>
+        <div style={{ padding: '1rem', overflowY: 'auto', background: 'var(--color-bg)' }}>
           {error && (
-            <div style={{ padding: '1rem', background: '#fef2f2', border: '1px solid #ef4444', borderRadius: '6px', color: '#dc2626' }}>
+            <div style={{
+              padding: '1rem',
+              background: '#fef2f2',
+              border: '1px solid #ef4444',
+              borderRadius: '6px',
+              color: '#dc2626',
+              marginBottom: '1rem'
+            }}>
               ❌ {error}
             </div>
           )}
 
           {result && (
             <div>
-              <h4 style={{ marginBottom: '0.5rem' }}>Result:</h4>
-              <table border="1" cellPadding="5" style={{ borderCollapse: 'collapse', width: '100%' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginBottom: '0.75rem'
+              }}>
+                <h4 style={{ color: 'var(--color-text)' }}>Result</h4>
+                <span style={{
+                  background: '#dcfce7',
+                  color: '#166534',
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  padding: '0.2rem 0.6rem',
+                  borderRadius: '999px'
+                }}>
+                  {result.rows?.length || 0} rows
+                </span>
+              </div>
+              <table border="1" cellPadding="5" style={{
+                borderCollapse: 'collapse',
+                width: '100%',
+                fontSize: '0.85rem',
+                color: 'var(--color-text)'
+              }}>
                 <thead>
-                  <tr>
+                  <tr style={{ background: 'var(--color-surface)' }}>
                     {result.columns?.map((col, i) => (
-                      <th key={i}>{col}</th>
+                      <th key={i} style={{ padding: '0.5rem', textAlign: 'left' }}>{col}</th>
                     ))}
                   </tr>
                 </thead>
@@ -173,7 +245,7 @@ if (!solvedList.includes(Number(id))) {
                   {result.rows?.map((row, i) => (
                     <tr key={i}>
                       {Object.values(row).map((val, j) => (
-                        <td key={j}>{val}</td>
+                        <td key={j} style={{ padding: '0.5rem' }}>{val}</td>
                       ))}
                     </tr>
                   ))}
