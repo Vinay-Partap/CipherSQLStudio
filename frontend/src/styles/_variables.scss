@@ -1,27 +1,8 @@
-// Breakpoints - Mobile First
+// Breakpoints
 $bp-mobile: 320px;
 $bp-tablet: 641px;
 $bp-desktop: 1024px;
 $bp-wide: 1281px;
-
-// Colors
-$color-primary: #2563eb;
-$color-primary-dark: #1d4ed8;
-$color-success: #10b981;
-$color-error: #ef4444;
-$color-warning: #f59e0b;
-$color-info: #3b82f6;
-
-// Neutrals
-$color-bg: #f1f5f9;
-$color-surface: #ffffff;
-$color-border: #e2e8f0;
-$color-text: #1e293b;
-$color-text-secondary: #64748b;
-
-// Editor
-$editor-bg: #1e1e1e;
-$editor-text: #d4d4d4;
 
 // Spacing
 $space-xs: 0.25rem;
@@ -32,3 +13,45 @@ $space-xl: 2rem;
 
 // Touch
 $touch-min: 44px;
+
+// CSS Custom Properties (Light mode default)
+:root {
+    --color-primary: #6366f1;
+    --color-primary-dark: #4f46e5;
+    --color-success: #22c55e;
+    --color-error: #ef4444;
+    --color-warning: #f59e0b;
+
+    --color-bg: #f8fafc;
+    --color-surface: #ffffff;
+    --color-border: #e2e8f0;
+    --color-text: #1e293b;
+    --color-text-secondary: #64748b;
+
+    --editor-bg: #1e1e1e;
+    --nav-bg: #ffffff;
+    --card-bg: #ffffff;
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='dark'] {
+    --color-bg: #0f172a;
+    --color-surface: #1e293b;
+    --color-border: #334155;
+    --color-text: #f1f5f9;
+    --color-text-secondary: #94a3b8;
+
+    --nav-bg: #1e293b;
+    --card-bg: #1e293b;
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+// SCSS vars pointing to CSS vars (for backward compat)
+$color-primary: var(--color-primary);
+$color-success: var(--color-success);
+$color-error: var(--color-error);
+$color-bg: var(--color-bg);
+$color-surface: var(--color-surface);
+$color-border: var(--color-border);
+$color-text: var(--color-text);
+$color-text-secondary: var(--color-text-secondary);

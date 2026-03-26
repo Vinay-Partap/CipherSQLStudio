@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Home from './pages/Home';
 import Assignment from './pages/Assignment';
 import Login from './pages/Login';
@@ -14,14 +15,10 @@ function AppRoutes() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/" element={
-        <ProtectedRoute>
-          <Home />
-        </ProtectedRoute>
+        <ProtectedRoute><Home /></ProtectedRoute>
       } />
       <Route path="/assignment/:id" element={
-        <ProtectedRoute>
-          <Assignment />
-        </ProtectedRoute>
+        <ProtectedRoute><Assignment /></ProtectedRoute>
       } />
     </Routes>
   );
@@ -29,11 +26,13 @@ function AppRoutes() {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
