@@ -15,6 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 // Routes
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/assignments', require('./routes/assignments'));
 app.use('/api/execute', require('./routes/execution'));
 app.use('/api/hints', require('./routes/hints'));
