@@ -40,6 +40,12 @@ function AssignmentPage() {
     try {
       const data = await executeQuery(id, query, sessionId);
       setResult(data);
+      // Mark as solved in localStorage
+const solvedList = JSON.parse(localStorage.getItem('solvedAssignments') || '[]');
+if (!solvedList.includes(Number(id))) {
+  solvedList.push(Number(id));
+  localStorage.setItem('solvedAssignments', JSON.stringify(solvedList));
+}
     } catch (err) {
       setError(err.message || 'Query execution failed');
     } finally {
