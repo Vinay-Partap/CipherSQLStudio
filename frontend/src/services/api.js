@@ -42,3 +42,17 @@ export function getHint(assignmentId, query, errorMessage) {
     body: JSON.stringify({ assignmentId, query, errorMessage })
   });
 }
+
+export function registerUser(email, password) {
+  return fetchApi('/api/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ email, password })
+  });
+}
+
+export function loginUser(email, password) {
+  return fetchApi('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password })
+  });
+}
